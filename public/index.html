@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Sign-in</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/e154cbeb5a.js" crossorigin="anonymous"></script>
+  <style>
+    .bg-google{
+      background: linear-gradient(-45deg, #76A7FA, #E57368, #FBCB43, #33B679);
+      background-size: 300% 300%;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .bg-button{
+      background-color: #34A853;
+    }
+    .bg-button:hover{
+      background-color: #2B8E46;
+    }
+    .color-blue{
+      color: #4285F4 !important;
+    }
+    .color-green{
+      color: #34A853 !important;
+    }
+    .color-yellow{
+      color: #FBBC05 !important;
+    }
+    .color-red{
+      color: #EA4335 !important;
+    }
+    .h-full{
+      min-height: 100vh;
+    }
+    .border-field{
+      border-color: #dee2e6;
+      border-top: 0px;
+      border-left: 0px;
+      border-right: 0px;
+    }
+    .font-text1{
+      font-size: 14px;
+      color: #666;
+    }
+    .font-text2{
+      font-size: 14px;
+      color: #333;
+    }
+    .font-text3{
+      font-size: 16px;
+      color: #666;
+    }
+    .font-text4{
+      font-size: 40px;
+      color: #515A5A;
+    }
+    .font-text5{
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+    }
+    .hv-green:hover{
+      color: #34A853;
+    }
+  </style>
+</head>
+
+<body class="bg-google">
+  <div class="container h-full">
+    <div class="row justify-content-md-center align-items-center h-full">
+      <div class="col-xl-4 col-lg-6 col-md-9">
+        <div class="card rounded-4 shadow-lg">
+          <div class="card-body">
+            <div class="p-lg-4 p-md-4">
+              <p class="text-center fw-medium font-text4">Sign In</p>
+              <div class="mt-5 mb-3">
+                <label for="exampleFormControlInput1" class="form-label font-text1">Username</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text bg-transparent rounded-0 border-field">
+                    <i class="fa-solid fa-user font-text3"></i>
+                  </span>
+                  <input type="text" class="form-control rounded-0 border-field font-text3" placeholder="Type you username" aria-label="Username">
+                </div>
+              </div>
+              <div class="mb-2">
+                <label for="exampleFormControlInput1" class="form-label font-text1">Password</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text bg-transparent rounded-0 border-field">
+                    <i class="fa-solid fa-lock font-text3"></i>
+                  </span>
+                  <input type="password" class="form-control rounded-0 border-field font-text3" placeholder="Type your password" aria-label="Password">
+                </div>
+              </div>
+              <div class="text-end mb-4">
+                <p class="font-text5 hv-green">Forgot password?</p>
+              </div>
+              <div class="d-grid gap-2 mb-5">
+                <button type="button" class="btn bg-button rounded-pill text-white ">SIGN IN</button>
+              </div>
+              <div>
+                <p class="text-center font-text1">Or Sing Up Using</p>
+              </div>
+              <div class="mb-4  ">
+                <div id="g_id_onload" 
+                  data-client_id=""
+                  data-auto_prompt="false"
+                  data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin text-center" 
+                  data-type="standard" 
+                  data-size="large" 
+                  data-theme="outline" 
+                  data-text="sign_in_with"
+                  data-shape="circle" 
+                  data-logo_alignment="left"
+                  data-width=335>
+                </div>
+              </div>
+            </div>
+            <div class="p-lg-4 p-md-4 text-center">
+              <p class="text-center font-text1 mb-3">Or Sing Up Using</p>
+              <p class="text-center font-text2">SIGN UP</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    function handleCredentialResponse(response) {
+      const body = { id_token: response.credential };
+      console.log(body)
+      fetch('http://localhost:3000/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }).then(resp => resp.json())
+        .then(resp => {
+          console.log(resp)
+          localStorage.setItem('email', resp.user.email);
+        }).catch(error => { console.log(error); });
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+service: user
+configValidationMode: off
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    MONGODB_CNN: ${ssm:/mongodb/store-domain/endpoint}
+    SECRETPRIVATEKEY: ${ssm:/jwt/store-domain/privateKey}
+    GOOGLE_CLIENT_ID: ${ssm:/google/store-domain/clientId}
+    GOOGLE_SECRET_ID: ${ssm:/google/store-domain/secretId}
+
+custom:
+  serverless-offline-ssm:
+    stages:
+      - offline
+    ssm:
+      '/mongodb/store-domain/endpoint': ''
+      '/jwt/store-domain/privateKey': ''
+      '/google/store-domain/clientId': ''
+      '/google/store-domain/secretId': ''
+      
+functions:
+  authentication:
+    handler: handlers/authentication.handler
+    events:
+      - http: GET /api/users
+      - http: POST /api/users
+      - http: PUT /api/users/{id}
+      - http: DELETE /api/users/{id}
+      - http: POST /api/auth/login
+      - http: POST /api/auth/google
+    cors: true
+
+
+plugins:
+  - serverless-offline
+  - serverless-offline-ssm
